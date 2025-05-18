@@ -35,9 +35,8 @@
 2. 添加一个你想要记录的事件（比如：喝水、做俯卧撑、背单词）  
 3. 每完成一次，就点一次「+」  
 4. 看着数字慢慢增长，你会越来越有动力！
-<p align="center">
-  <img src="https://private-user-images.githubusercontent.com/189369966/444860187-d3fcebb0-c562-46e1-8abb-e87857ae6fac.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc1NDkyODcsIm5iZiI6MTc0NzU0ODk4NywicGF0aCI6Ii8xODkzNjk5NjYvNDQ0ODYwMTg3LWQzZmNlYmIwLWM1NjItNDZlMS04YWJiLWU4Nzg1N2FlNmZhYy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTE4JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUxOFQwNjE2MjdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00NDFmZGU3MjY3M2YzZGVmYTY4NDI0YmRiZWVmZjg0Nzk0MDFmNjZhNzVkNDIzY2ZhNmYzOWZmOWE3MDRkMDI2JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.aHTxTjJ5QnP-9KCHtYzWOVm6SYXulCV-U0aiEauiw_Q" width="300" style="border-radius: 10px;" />
-</p>
+5. 截图预览
+<img src="https://github.com/Neosamzzz/PlusOne/blob/main/images/Snapshot.png?raw=true" width="300"/>
 
 ---
 
