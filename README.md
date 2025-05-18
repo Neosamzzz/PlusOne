@@ -12,8 +12,6 @@
 - 📝 左滑重命名或删除计数项  
 - 🧼 清爽简洁、没有花里胡哨
 
-<img src="/Users/hyberiid/Library/Containers/com.tencent.qq/Data/Library/Application Support/QQ/nt_qq_0a6ca741eb9b86a74a26cdbfb869000b/nt_data/Pic/2025-05/Thumb/2a78b85a4f650fe9260dcee0c307b0b6_720.png" alt="2a78b85a4f650fe9260dcee0c307b0b6_720" style="zoom:33%;" />
-
 ---
 
 ## 🛠 技术栈
