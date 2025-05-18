@@ -45,22 +45,6 @@
 
 ---
 
-## 📁 项目结构
-
-PlusOne/
-
-├── Assets.xcassets   # 图片资源
-
-├── ContentView.swift  # 主页面
-
-├── Model/       # 数据结构
-
-├── View/        # UI界面
-
-└── PlusOneApp.swift  # App入口
-
----
-
 ## 📲 如何安装到自己的 iPhone（无需上架 App Store）
 
 你可以使用 **Xcode** 将这个 App 安装到自己的 iPhone 上，无需开发者付费账号，仅供自己使用或测试。
