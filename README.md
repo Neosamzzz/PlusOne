@@ -35,7 +35,7 @@
 2. 添加一个你想要记录的事件（比如：喝水、做俯卧撑、背单词）  
 3. 每完成一次，就点一次「+」  
 4. 看着数字慢慢增长，你会越来越有动力！
-
+https://java-studyweb.oss-cn-beijing.aliyuncs.com/PlusOneSnapshot.png
 ---
 
 ## 🧸 项目状态
