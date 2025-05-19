@@ -21,7 +21,9 @@ struct ContentView: View {
     @State private var deletingEventIndex: Int? = nil
     @State private var showNativeDeleteAlert = false
     @State private var showEmptyNameAlert = false // 新增：空名称提示
-    
+    // 新增：自定义跳转相关
+    @State private var showDetail = false
+    @State private var selectedEvent: Event? = nil
     // 新增：震动反馈生成器
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
     
@@ -36,7 +38,7 @@ struct ContentView: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // 主内容区
                 ZStack {
@@ -54,25 +56,35 @@ struct ContentView: View {
                             // 事件列表
                             List {
                                 ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
-                                    EventRowView(
-                                        event: event,
-                                        index: index,
-                                        events: $events,
-                                        onEditCount: { index in
-                                            editingEventIndex = index
-                                            editCountValue = String(events[index].count)
-                                            showEditCount = true
-                                        },
-                                        onRename: { index in
-                                            renameValue = events[index].name
-                                            editingEventIndex = index
-                                            showRename = true
-                                        },
-                                        onDelete: { index in
-                                            deletingEventIndex = index
-                                            showNativeDeleteAlert = true
+                                    Button(action: {
+                                        feedbackGenerator.impactOccurred()
+                                        selectedEvent = event
+                                        DispatchQueue.main.async {
+                                            showDetail = true
                                         }
-                                    )
+                                    }) {
+                                        EventRowView(
+                                            event: event,
+                                            index: index,
+                                            events: $events,
+                                            onEditCount: { index in
+                                                editingEventIndex = index
+                                                editCountValue = String(events[index].count)
+                                                showEditCount = true
+                                            },
+                                            onRename: { index in
+                                                renameValue = events[index].name
+                                                editingEventIndex = index
+                                                showRename = true
+                                            },
+                                            onDelete: { index in
+                                                deletingEventIndex = index
+                                                showNativeDeleteAlert = true
+                                            }
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .listRowBackground(Color.clear)
                                 }
                                 .onDelete { indexSet in
                                     if let first = indexSet.first {
@@ -199,6 +211,23 @@ struct ContentView: View {
             } message: {
                 Text("事件名称不能为空哦～")
             }
+            // 详情页跳转
+            .background(
+                NavigationLink(
+                    isActive: $showDetail,
+                    destination: {
+                        EventDetailWrapper(
+                            event: selectedEvent,
+                            onBack: {
+                                showDetail = false
+                                selectedEvent = nil
+                            }
+                        )
+                    },
+                    label: { EmptyView() }
+                )
+                .hidden()
+            )
         }
         .onAppear(perform: {
             events = DataManager.shared.loadEvents()
