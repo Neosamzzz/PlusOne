@@ -9,9 +9,9 @@ import SwiftUI
 import UIKit // 导入 UIKit 以使用震动反馈
 
 struct ContentView: View {
+    @StateObject private var store = EventStore.shared
     @State private var showAddEvent = false
     @State private var newEventName = ""
-    @State private var events: [Event] = []
     @State private var showEditCount = false
     @State private var editingEventIndex: Int? = nil
     @State private var editCountValue: String = ""
@@ -23,7 +23,7 @@ struct ContentView: View {
     @State private var showEmptyNameAlert = false // 新增：空名称提示
     // 新增：自定义跳转相关
     @State private var showDetail = false
-    @State private var selectedEvent: Event? = nil
+    @State private var selectedEventId: UUID? = nil
     // 新增：震动反馈生成器
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
     
@@ -43,7 +43,7 @@ struct ContentView: View {
                 // 主内容区
                 ZStack {
                     VStack(spacing: 0) {
-                        if events.isEmpty {
+                        if store.events.isEmpty {
                             VStack(spacing: 12) {
                                 Image(systemName: "rectangle.stack.badge.plus")
                                     .font(.system(size: 60))
@@ -55,33 +55,34 @@ struct ContentView: View {
                         } else {
                             // 事件列表
                             List {
-                                ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
+                                ForEach(store.events.indices, id: \.self) { index in
+                                    let event = store.events[index]
                                     Button(action: {
                                         feedbackGenerator.impactOccurred()
-                                        selectedEvent = event
+                                        selectedEventId = event.id
                                         DispatchQueue.main.async {
                                             showDetail = true
                                         }
                                     }) {
-                                        EventRowView(
-                                            event: event,
-                                            index: index,
-                                            events: $events,
-                                            onEditCount: { index in
-                                                editingEventIndex = index
-                                                editCountValue = String(events[index].count)
-                                                showEditCount = true
-                                            },
-                                            onRename: { index in
-                                                renameValue = events[index].name
-                                                editingEventIndex = index
-                                                showRename = true
-                                            },
-                                            onDelete: { index in
-                                                deletingEventIndex = index
-                                                showNativeDeleteAlert = true
-                                            }
-                                        )
+                                    EventRowView(
+                                        event: event,
+                                        index: index,
+                                        events: $store.events,
+                                        onEditCount: { index in
+                                            editingEventIndex = index
+                                            editCountValue = String(store.events[index].count)
+                                            showEditCount = true
+                                        },
+                                        onRename: { index in
+                                            renameValue = store.events[index].name
+                                            editingEventIndex = index
+                                            showRename = true
+                                        },
+                                        onDelete: { index in
+                                            deletingEventIndex = index
+                                            showNativeDeleteAlert = true
+                                        }
+                                    )
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                     .listRowBackground(Color.clear)
@@ -102,27 +103,31 @@ struct ContentView: View {
                     if showAddEvent {
                         Color.black.opacity(0.3)
                             .ignoresSafeArea()
-                        ReusableInputDialog(
-                            title: "请输入事件名称",
-                            text: $newEventName,
-                            keyboardType: .default,
-                            maxLength: nil,
-                            isNumberOnly: false,
-                            onCancel: {
+                        NavigationView {
+                            Form {
+                                Section(header: Spacer().frame(height: 10)) {
+                                    TextField("事件名称", text: $newEventName)
+                                }
+                            }
+                            .navigationTitle("添加事件")
+                            .navigationBarItems(
+                                leading: Button("取消") {
                                 showAddEvent = false
                                 newEventName = ""
                             },
-                            onConfirm: {
+                                trailing: Button("保存") {
                                 if newEventName.trimmingCharacters(in: .whitespaces).isEmpty {
                                     showEmptyNameAlert = true
                                 } else {
-                                    events.append(Event(name: newEventName, count: 0))
-                                    DataManager.shared.saveEvents(events)
+                                    store.events.append(Event(name: newEventName, count: 0))
+                                    store.saveEvents()
                                     showAddEvent = false
                                     newEventName = ""
                                 }
                             }
                         )
+                        }
+                        .presentationDetents([.height(200)])
                     }
                     
                     // 编辑计数弹窗
@@ -142,8 +147,10 @@ struct ContentView: View {
                             },
                             onConfirm: {
                                 if let newValue = Int(editCountValue), newValue >= 0 && newValue <= 9999 {
-                                    events[index].count = newValue
-                                    DataManager.shared.saveEvents(events)
+                                    store.events[index].count = newValue
+                                    // 添加记录
+                                    store.events[index].records.append(CountRecord(count: newValue))
+                                    store.saveEvents()
                                 }
                                 showEditCount = false
                                 editCountValue = ""
@@ -156,27 +163,31 @@ struct ContentView: View {
                     if showRename, let index = editingEventIndex {
                         Color.black.opacity(0.3)
                             .ignoresSafeArea()
-                        ReusableInputDialog(
-                            title: "请输入新的事件名称",
-                            text: $renameValue,
-                            keyboardType: .default,
-                            maxLength: nil,
-                            isNumberOnly: false,
-                            onCancel: {
+                        NavigationView {
+                            Form {
+                                Section(header: Spacer().frame(height: 10)) {
+                                    TextField("事件名称", text: $renameValue)
+                                }
+                            }
+                            .navigationTitle("重命名")
+                            .navigationBarItems(
+                                leading: Button("取消") {
                                 showRename = false
                                 renameValue = ""
                                 editingEventIndex = nil
                             },
-                            onConfirm: {
+                                trailing: Button("保存") {
                                 if !renameValue.trimmingCharacters(in: .whitespaces).isEmpty {
-                                    events[index].name = renameValue
-                                    DataManager.shared.saveEvents(events)
+                                    store.events[index].name = renameValue
+                                    store.saveEvents()
                                 }
                                 showRename = false
                                 renameValue = ""
                                 editingEventIndex = nil
                             }
                         )
+                        }
+                        .presentationDetents([.height(200)])
                     }
                 }
             }
@@ -199,8 +210,8 @@ struct ContentView: View {
                 Button("取消", role: .cancel) { }
                 Button("删除", role: .destructive) {
                     if let index = deletingEventIndex {
-                        events.remove(at: index)
-                        DataManager.shared.saveEvents(events)
+                        store.events.remove(at: index)
+                        store.saveEvents()
                     }
                 }
             } message: {
@@ -217,10 +228,10 @@ struct ContentView: View {
                     isActive: $showDetail,
                     destination: {
                         EventDetailWrapper(
-                            event: selectedEvent,
+                            eventId: selectedEventId,
                             onBack: {
                                 showDetail = false
-                                selectedEvent = nil
+                                selectedEventId = nil
                             }
                         )
                     },
@@ -229,9 +240,6 @@ struct ContentView: View {
                 .hidden()
             )
         }
-        .onAppear(perform: {
-            events = DataManager.shared.loadEvents()
-        })
     }
 }
 

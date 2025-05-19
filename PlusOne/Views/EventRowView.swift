@@ -25,6 +25,8 @@ struct EventRowView: View {
                     feedbackGenerator.impactOccurred()
                     if index < events.count && events[index].count > 0 {
                         events[index].count -= 1
+                        // 添加记录
+                        events[index].records.append(CountRecord(count: events[index].count))
                         DataManager.shared.saveEvents(events)
                     }
                 }) {
@@ -46,6 +48,8 @@ struct EventRowView: View {
                     feedbackGenerator.impactOccurred()
                     if index < events.count && events[index].count < 9999 {
                         events[index].count += 1
+                        // 添加记录
+                        events[index].records.append(CountRecord(count: events[index].count))
                         DataManager.shared.saveEvents(events)
                     }
                 }) {
